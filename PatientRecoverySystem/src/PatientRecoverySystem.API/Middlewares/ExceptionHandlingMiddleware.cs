@@ -20,26 +20,45 @@ namespace PatientRecoverySystem.API.Middlewares
             {
                 await _next(context);
             }
-            catch (UnauthorizedAccessException ex)
-            {
-                _logger.LogWarning(ex, "Unauthorized Access");
-                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync(JsonSerializer.Serialize(new
-                {
-                    message = ex.Message
-                }));
-            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled Exception");
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync(JsonSerializer.Serialize(new
-                {
-                    message = "An unexpected error occurred."
-                }));
+
+                await HandleExceptionAsync(context, ex);
             }
+        }
+
+        private Task HandleExceptionAsync(HttpContext context, Exception exception)
+        {
+            context.Response.ContentType = "application/json";
+
+            var response = context.Response;
+            var result = "";
+
+            switch (exception)
+            {
+                case InvalidOperationException invalidOperation:
+                    response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    result = JsonSerializer.Serialize(new { message = invalidOperation.Message });
+                    break;
+
+                case UnauthorizedAccessException unauthorized:
+                    response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    result = JsonSerializer.Serialize(new { message = unauthorized.Message });
+                    break;
+
+                case KeyNotFoundException notFound:
+                    response.StatusCode = (int)HttpStatusCode.NotFound;
+                    result = JsonSerializer.Serialize(new { message = notFound.Message });
+                    break;
+
+                default:
+                    response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    result = JsonSerializer.Serialize(new { message = "An unexpected error occurred." });
+                    break;
+            }
+
+            return context.Response.WriteAsync(result);
         }
     }
 }

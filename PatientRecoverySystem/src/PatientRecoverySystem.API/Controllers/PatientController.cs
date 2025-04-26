@@ -74,6 +74,35 @@ namespace PatientRecoverySystem.API.Controllers
         }
 
         /// <summary>
+        /// Update a patient by ID
+        /// </summary>
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Doctor,AdminDoctor,Moderator")]
+        public async Task<IActionResult> UpdatePatient(int id, [FromBody] PatientDto patientDto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var updatedPatient = await _patientService.UpdatePatientAsync(id, patientDto);
+            if (updatedPatient == null) return NotFound();
+
+            return Ok(updatedPatient);
+        }
+
+        /// <summary>
+        /// Delete a patient by ID
+        /// </summary>
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Doctor,AdminDoctor,Moderator")]
+        public async Task<IActionResult> DeletePatient(int id)
+        {
+            var patient = await _patientService.GetPatientByIdAsync(id);
+            if (patient == null) return NotFound();
+
+            await _patientService.DeletePatientAsync(id);
+            return NoContent();
+        }
+
+        /// <summary>
         /// Add a recovery log to a specific patient
         /// </summary>
         [HttpPost("{patientId}/recovery-log")]

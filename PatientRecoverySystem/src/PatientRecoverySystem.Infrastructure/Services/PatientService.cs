@@ -1,11 +1,13 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using PatientRecoverySystem.Application.DTOs;
 using PatientRecoverySystem.Application.Interfaces;
 using PatientRecoverySystem.Domain.Entities;
+using PatientRecoverySystem.Domain.Enums;
 using PatientRecoverySystem.Domain.Interfaces;
-using System.Security.Claims;
+using PatientRecoverySystem.Infrastructure.Data;
 
 namespace PatientRecoverySystem.Infrastructure.Services
 {
@@ -14,15 +16,18 @@ namespace PatientRecoverySystem.Infrastructure.Services
         private readonly IPatientRepository _patientRepository;
         private readonly IMapper _mapper;
         private readonly IPasswordHasher<Patient> _passwordHasher;
+        private readonly ApplicationDbContext _context; 
 
         public PatientService(
             IPatientRepository patientRepository,
             IMapper mapper,
-            IPasswordHasher<Patient> passwordHasher)
+            IPasswordHasher<Patient> passwordHasher,
+            ApplicationDbContext context) // Inject DbContext
         {
             _patientRepository = patientRepository;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
+            _context = context;
         }
 
         public async Task<List<PatientDto>> GetAllPatientsAsync(ClaimsPrincipal user)
@@ -71,6 +76,9 @@ namespace PatientRecoverySystem.Infrastructure.Services
         {
             var patient = _mapper.Map<Patient>(dto);
 
+            // 🔐 Force Patient role
+            patient.Role = UserRole.Patient;
+
             // 🔐 Hash the password before saving
             patient.Password = _passwordHasher.HashPassword(patient, dto.Password);
 
@@ -85,19 +93,39 @@ namespace PatientRecoverySystem.Infrastructure.Services
             await _patientRepository.AddRecoveryLogAsync(recoveryLog);
         }
 
-        public async Task<PatientDto> UpdatePatientAsync(int id, PatientDto dto)
+        public async Task<PatientDto?> UpdatePatientAsync(int id, PatientDto dto)
         {
-            var patient = await _patientRepository.GetByIdAsync(id);
-            if (patient == null) return null;
+            var existingPatient = await _patientRepository.GetByIdAsync(id);
+            if (existingPatient == null) return null;
 
-            // 🔐 Hash the password before saving
-            patient.Password = _passwordHasher.HashPassword(patient, dto.Password);
+            // 🔥 Validate that Doctor exists
+            var doctorExists = await _context.Doctors.AnyAsync(d => d.Id == dto.DoctorId);
+            if (!doctorExists)
+            {
+                throw new InvalidOperationException($"Doctor with Id {dto.DoctorId} not found. Cannot assign to patient.");
+            }
 
-            patient = _mapper.Map(dto, patient);
-            var updated = await _patientRepository.UpdateAsync(patient);
+            // Update only allowed fields
+            existingPatient.FullName = dto.FullName;
+            existingPatient.Email = dto.Email;
+            existingPatient.Phone = dto.Phone;
+            existingPatient.DateOfBirth = dto.DateOfBirth;
+            existingPatient.DoctorId = dto.DoctorId;
 
+            // 🔥 Force Role to Patient, protect against role hacking
+            existingPatient.Role = UserRole.Patient;
+
+            // 🔐 Hash password if provided
+            if (!string.IsNullOrWhiteSpace(dto.Password))
+            {
+                existingPatient.Password = _passwordHasher.HashPassword(existingPatient, dto.Password);
+            }
+
+            var updated = await _patientRepository.UpdateAsync(existingPatient);
             return _mapper.Map<PatientDto>(updated);
         }
+
+
 
         public async Task DeletePatientAsync(int id)
         {
