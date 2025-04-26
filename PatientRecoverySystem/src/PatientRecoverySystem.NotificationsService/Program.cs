@@ -7,12 +7,17 @@ using PatientRecoverySystem.NotificationsService.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// =========================
 // Configure Services
+// =========================
+
 builder.Services.AddDbContext<NotificationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("NotificationDb")));
 
 builder.Services.AddMassTransit(x =>
 {
+    x.AddConsumer<RecoveryLogCreatedConsumer>(); // 👈 ADD THIS
+
     x.UsingRabbitMq((context, cfg) =>
     {
         var rabbitMqHost = Environment.GetEnvironmentVariable("RabbitMQ__Host") ?? "localhost";
@@ -23,14 +28,19 @@ builder.Services.AddMassTransit(x =>
             h.Password("guest");
         });
 
+        cfg.ReceiveEndpoint("recovery-log-created-event-queue", e =>
+        {
+            e.ConfigureConsumer<RecoveryLogCreatedConsumer>(context);
+        });
+
         cfg.UseRetry(retryConfig =>
         {
-            retryConfig.Interval(10, TimeSpan.FromSeconds(5)); // Try 10 times, every 5 seconds
+            retryConfig.Interval(10, TimeSpan.FromSeconds(5));
         });
     });
 });
 
-// Add Controllers and Swagger
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -42,9 +52,12 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-var app = builder.Build(); // ✅ Must be WebApplication
+var app = builder.Build();
 
+// =========================
 // Configure Middleware
+// =========================
+
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
@@ -55,4 +68,15 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-app.Run(); // ✅ Correct
+// =========================
+// Ensure Database Exists
+// =========================
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<NotificationDbContext>();
+    dbContext.Database.Migrate(); 
+}
+
+app.Run();

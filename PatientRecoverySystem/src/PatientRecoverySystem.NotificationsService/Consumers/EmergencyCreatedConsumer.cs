@@ -4,30 +4,29 @@ using PatientRecoverySystem.NotificationsService.Data;
 using PatientRecoverySystem.NotificationsService.Models;
 
 namespace PatientRecoverySystem.NotificationsService.Consumers;
-public class EmergencyCreatedConsumer : IConsumer<EmergencyCreatedEvent>
-{
-    private readonly NotificationDbContext _context;
 
-    public EmergencyCreatedConsumer(NotificationDbContext context)
+public class RecoveryLogCreatedConsumer : IConsumer<RecoveryLogCreated>
+{
+    private readonly NotificationDbContext _dbContext;
+
+    public RecoveryLogCreatedConsumer(NotificationDbContext dbContext)
     {
-        _context = context;
+        _dbContext = dbContext;
     }
 
-    public async Task Consume(ConsumeContext<EmergencyCreatedEvent> context)
+    public async Task Consume(ConsumeContext<RecoveryLogCreated> context)
     {
         var message = context.Message;
 
-        var log = new NotificationLog
+        var notification = new NotificationLog
         {
             PatientId = message.PatientId,
             EmergencyType = message.EmergencyType,
-            CreatedAt = message.CreatedAt,
+            CreatedAt = DateTime.UtcNow,
             ReceivedAt = DateTime.UtcNow
         };
 
-        _context.NotificationLogs.Add(log);
-        await _context.SaveChangesAsync();
-
-        Console.WriteLine($"[NotificationService] Emergency saved: PatientId={message.PatientId}, Type={message.EmergencyType}");
+        _dbContext.NotificationLogs.Add(notification);
+        await _dbContext.SaveChangesAsync();
     }
 }
