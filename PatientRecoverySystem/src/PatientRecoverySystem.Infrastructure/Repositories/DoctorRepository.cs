@@ -17,6 +17,7 @@ namespace PatientRecoverySystem.Infrastructure.Repositories
         public async Task<List<Doctor>> GetAllAsync()
         {
             return await _context.Doctors
+                .Where(d => d.Role != Domain.Enums.UserRole.AdminDoctor) // 🚀 exclude AdminDoctors
                 .Include(d => d.Patients)
                 .ToListAsync();
         }
@@ -33,6 +34,37 @@ namespace PatientRecoverySystem.Infrastructure.Repositories
             _context.Doctors.Add(doctor);
             await _context.SaveChangesAsync();
             return doctor;
+        }
+
+        public async Task<Doctor?> UpdateAsync(int id, Doctor doctor)
+        {
+            var existingDoctor = await _context.Doctors.FindAsync(id);
+
+            if (existingDoctor == null)
+            {
+                return null; // Doctor not found
+            }
+
+            // Only update allowed fields (do NOT touch ID)
+            existingDoctor.FullName = doctor.FullName;
+            existingDoctor.Email = doctor.Email;
+            existingDoctor.Password = doctor.Password;
+            existingDoctor.Role = doctor.Role;
+
+            await _context.SaveChangesAsync();
+
+            return existingDoctor;
+        }
+
+
+        public async Task DeleteAsync(int id)
+        {
+            var doctor = await GetByIdAsync(id);
+            if (doctor != null)
+            {
+                _context.Doctors.Remove(doctor);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

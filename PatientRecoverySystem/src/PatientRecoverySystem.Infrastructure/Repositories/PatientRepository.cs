@@ -48,5 +48,22 @@ namespace PatientRecoverySystem.Infrastructure.Repositories
             _context.RecoveryLogs.Add(log);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<Patient> UpdateAsync(Patient patient)
+        {
+            _context.Patients.Update(patient);
+            await _context.SaveChangesAsync();
+            return patient;
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var patient = await _context.Patients.FindAsync(id);
+            if (patient != null)
+            {
+                _context.Patients.Remove(patient);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

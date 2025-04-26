@@ -50,7 +50,7 @@ namespace PatientRecoverySystem.API.Controllers
         [Authorize(Roles = "AdminDoctor,Moderator")]
         public async Task<IActionResult> GetPatientsByDoctorId(int doctorId)
         {
-            var doctorExists = await _doctorService.GetDoctorByIdAsync(doctorId);
+            var doctorExists = await _doctorService.GetDoctorByIdAsync(doctorId, User);
             if (doctorExists == null)
             {
                 return NotFound(new { message = "Doctor not found" });

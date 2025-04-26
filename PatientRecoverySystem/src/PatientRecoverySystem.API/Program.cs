@@ -130,6 +130,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//Middlewares 
+app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddleware>();
+
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");

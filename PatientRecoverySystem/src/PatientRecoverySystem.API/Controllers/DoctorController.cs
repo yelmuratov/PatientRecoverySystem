@@ -32,14 +32,24 @@ namespace PatientRecoverySystem.API.Controllers
         /// Get a doctor by ID
         /// </summary>
         [HttpGet("{id}")]
-        [Authorize(Roles = "AdminDoctor,Moderator")] // 🔒 Only AdminDoctor and Moderator can access this endpoint
+        [Authorize(Roles = "AdminDoctor,Moderator")]
         public async Task<IActionResult> GetDoctorById(int id)
         {
-            var doctor = await _doctorService.GetDoctorByIdAsync(id);
-            if (doctor == null) return NotFound();
-
-            return Ok(doctor);
+            try
+            {
+                var doctor = await _doctorService.GetDoctorByIdAsync(id, User);
+                return Ok(doctor);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
         }
+
 
         /// <summary>
         /// Create a new doctor (Only AdminDoctor and Moderator can use this ideally)
@@ -50,8 +60,35 @@ namespace PatientRecoverySystem.API.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var createdDoctor = await _doctorService.CreateDoctorAsync(doctorDto);
+            var createdDoctor = await _doctorService.CreateDoctorAsync(doctorDto, User);
             return CreatedAtAction(nameof(GetDoctorById), new { id = createdDoctor.Id }, createdDoctor);
+        }
+
+        /// <summary>
+        /// Update a doctor by ID (Only AdminDoctor and Moderator can use this ideally)
+        /// </summary>
+        [HttpPut("{id}")]
+        [Authorize(Roles = "AdminDoctor,Moderator")]
+        public async Task<IActionResult> UpdateDoctor(int id, [FromBody] DoctorDto doctorDto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var updated = await _doctorService.UpdateDoctorAsync(id, doctorDto, User); // pass User here
+            if (updated == null) return NotFound();
+
+            return Ok(updated);
+        }
+
+
+        /// <summary>
+        /// Delete a doctor by ID (Only AdminDoctor and Moderator can use this ideally)
+        /// </summary>
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "AdminDoctor,Moderator")]
+        public async Task<IActionResult> DeleteDoctor(int id)
+        {
+            await _doctorService.DeleteDoctorAsync(id, User);
+            return NoContent();
         }
     }
 }

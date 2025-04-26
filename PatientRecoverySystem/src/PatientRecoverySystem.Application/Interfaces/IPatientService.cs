@@ -9,6 +9,8 @@ namespace PatientRecoverySystem.Application.Interfaces
         Task<PatientDto> GetPatientByIdAsync(int id);
         Task<List<PatientDto>> GetPatientsByDoctorIdAsync(int doctorId);
         Task<PatientDto> CreatePatientAsync(PatientDto dto);
+        Task<PatientDto> UpdatePatientAsync(int id, PatientDto dto);
+        Task DeletePatientAsync(int id);
         Task AddRecoveryLogAsync(int patientId, RecoveryLogDto logDto);
     }
 }

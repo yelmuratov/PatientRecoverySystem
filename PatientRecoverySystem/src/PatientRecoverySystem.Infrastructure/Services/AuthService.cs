@@ -55,7 +55,7 @@ namespace PatientRecoverySystem.Infrastructure.Services
                 }
             }
 
-            return null; // ❌ Invalid credentials
+            return null; 
         }
 
         private string GenerateJwtTokenForDoctor(Doctor doctor)

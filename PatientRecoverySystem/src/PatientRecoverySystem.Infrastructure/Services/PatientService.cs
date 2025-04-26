@@ -84,5 +84,28 @@ namespace PatientRecoverySystem.Infrastructure.Services
             recoveryLog.PatientId = patientId;
             await _patientRepository.AddRecoveryLogAsync(recoveryLog);
         }
+
+        public async Task<PatientDto> UpdatePatientAsync(int id, PatientDto dto)
+        {
+            var patient = await _patientRepository.GetByIdAsync(id);
+            if (patient == null) return null;
+
+            // 🔐 Hash the password before saving
+            patient.Password = _passwordHasher.HashPassword(patient, dto.Password);
+
+            patient = _mapper.Map(dto, patient);
+            var updated = await _patientRepository.UpdateAsync(patient);
+
+            return _mapper.Map<PatientDto>(updated);
+        }
+
+        public async Task DeletePatientAsync(int id)
+        {
+            var patient = await _patientRepository.GetByIdAsync(id);
+            if (patient != null)
+            {
+                await _patientRepository.DeleteAsync(id);
+            }
+        }
     }
 }
