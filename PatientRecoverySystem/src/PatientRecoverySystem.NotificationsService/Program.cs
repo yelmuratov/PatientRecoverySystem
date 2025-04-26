@@ -13,19 +13,19 @@ builder.Services.AddDbContext<NotificationDbContext>(options =>
 
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumer<EmergencyCreatedConsumer>();
-
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("localhost", "/", h =>
+        var rabbitMqHost = Environment.GetEnvironmentVariable("RabbitMQ__Host") ?? "localhost";
+
+        cfg.Host(rabbitMqHost, "/", h =>
         {
             h.Username("guest");
             h.Password("guest");
         });
 
-        cfg.ReceiveEndpoint("emergency-created-queue", e =>
+        cfg.UseRetry(retryConfig =>
         {
-            e.ConfigureConsumer<EmergencyCreatedConsumer>(context);
+            retryConfig.Interval(10, TimeSpan.FromSeconds(5)); // Try 10 times, every 5 seconds
         });
     });
 });
@@ -45,7 +45,7 @@ builder.Services.AddSwaggerGen(options =>
 var app = builder.Build(); // ✅ Must be WebApplication
 
 // Configure Middleware
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

@@ -77,13 +77,21 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("localhost", "/", h =>
+        var rabbitMqHost = Environment.GetEnvironmentVariable("RabbitMQ__Host") ?? "localhost";
+
+        cfg.Host(rabbitMqHost, "/", h =>
         {
             h.Username("guest");
             h.Password("guest");
         });
+
+        cfg.UseRetry(retryConfig =>
+        {
+            retryConfig.Interval(10, TimeSpan.FromSeconds(5)); // Try 10 times, every 5 seconds
+        });
     });
 });
+
 
 // Add Controllers
 builder.Services.AddControllers();
@@ -137,10 +145,14 @@ var app = builder.Build();
 // Configure Middleware
 // =========================
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "PatientRecoverySystem.API v1");
+        c.RoutePrefix = "swagger"; // So that Swagger lives under /swagger
+    });
 }
 
 app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddleware>();
