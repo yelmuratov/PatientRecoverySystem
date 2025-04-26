@@ -1,0 +1,16 @@
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\bin\Debug\net9.0\PatientRecoverySystem.Application.deps.json
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\bin\Debug\net9.0\PatientRecoverySystem.Application.dll
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\bin\Debug\net9.0\PatientRecoverySystem.Application.pdb
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\bin\Debug\net9.0\PatientRecoverySystem.Domain.dll
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\bin\Debug\net9.0\PatientRecoverySystem.Domain.pdb
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\obj\Debug\net9.0\PatientRecoverySystem.Application.csproj.AssemblyReference.cache
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\obj\Debug\net9.0\PatientRecoverySystem.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\obj\Debug\net9.0\PatientRecoverySystem.Application.AssemblyInfoInputs.cache
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\obj\Debug\net9.0\PatientRecoverySystem.Application.AssemblyInfo.cs
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\obj\Debug\net9.0\PatientRecoverySystem.Application.csproj.CoreCompileInputs.cache
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\obj\Debug\net9.0\PatientRecoverySystem.Application.sourcelink.json
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\obj\Debug\net9.0\PatientR.6CC60B6D.Up2Date
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\obj\Debug\net9.0\PatientRecoverySystem.Application.dll
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\obj\Debug\net9.0\refint\PatientRecoverySystem.Application.dll
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\obj\Debug\net9.0\PatientRecoverySystem.Application.pdb
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.Application\obj\Debug\net9.0\ref\PatientRecoverySystem.Application.dll
