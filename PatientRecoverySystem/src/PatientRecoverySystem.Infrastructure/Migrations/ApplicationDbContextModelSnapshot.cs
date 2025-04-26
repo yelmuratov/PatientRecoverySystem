@@ -104,7 +104,14 @@ namespace PatientRecoverySystem.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Diastolic")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DoctorId")
                         .HasColumnType("int");
 
                     b.Property<int>("HeartRate")

@@ -10,6 +10,7 @@ using PatientRecoverySystem.Infrastructure.Repositories;
 using PatientRecoverySystem.Application.Mappings;
 using Microsoft.AspNetCore.Identity;
 using PatientRecoverySystem.Domain.Entities;
+using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,8 +31,9 @@ builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddSingleton<ITokenBlacklistService, TokenBlacklistService>();
+builder.Services.AddScoped<IRecoveryLogService, RecoveryLogService>();
 
-// Add Password Hashers (for hashing passwords securely)
+// Add Password Hashers
 builder.Services.AddScoped<IPasswordHasher<Doctor>, PasswordHasher<Doctor>>();
 builder.Services.AddScoped<IPasswordHasher<Patient>, PasswordHasher<Patient>>();
 
@@ -70,6 +72,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+// Add MassTransit for RabbitMQ
+builder.Services.AddMassTransit(x =>
+{
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+    });
+});
 
 // Add Controllers
 builder.Services.AddControllers();
@@ -108,8 +122,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
-// Configure CORS (optional if frontend will be separate Angular app)
+// Configure CORS (optional if frontend will be separate)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -130,14 +143,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//Middlewares 
 app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
-
 app.UseCors("AllowAll");
-
-app.UseAuthentication(); // 🔥 Very important
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

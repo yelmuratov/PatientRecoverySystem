@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using PatientRecoverySystem.Application.DTOs;
 using PatientRecoverySystem.Application.Interfaces;
 using PatientRecoverySystem.Domain.Interfaces;
-
+using PatientRecoverySystem.Application.Parameters; 
+using PatientRecoverySystem.Domain.Entities; 
 namespace PatientRecoverySystem.API.Controllers
 {
     [ApiController]
@@ -21,15 +22,18 @@ namespace PatientRecoverySystem.API.Controllers
         }
 
         /// <summary>
-        /// Get all patients
+        /// Returns a paginated, searchable, sortable list of patients.
         /// </summary>
+        /// <param name="parameters">Query parameters for pagination, filtering, and sorting.</param>
+        /// <returns>Paginated list of patients</returns>
         [HttpGet]
-        [Authorize(Roles = "Doctor,AdminDoctor,Moderator")]
-        public async Task<IActionResult> GetAllPatients()
+        [ProducesResponseType(typeof(PagedResult<PatientDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllPatients([FromQuery] PatientQueryParameters parameters)
         {
-            var patients = await _patientService.GetAllPatientsAsync(User);
-            return Ok(patients);
+            var result = await _patientService.GetAllPatientsAsync(parameters, User);
+            return Ok(result);
         }
+
 
         /// <summary>
         /// Get a patient by ID
@@ -100,19 +104,6 @@ namespace PatientRecoverySystem.API.Controllers
 
             await _patientService.DeletePatientAsync(id);
             return NoContent();
-        }
-
-        /// <summary>
-        /// Add a recovery log to a specific patient
-        /// </summary>
-        [HttpPost("{patientId}/recovery-log")]
-        [Authorize(Roles = "Doctor,AdminDoctor,Moderator,Patient")]
-        public async Task<IActionResult> AddRecoveryLog(int patientId, [FromBody] RecoveryLogDto logDto)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            await _patientService.AddRecoveryLogAsync(patientId, logDto);
-            return Ok(new { message = "Recovery log added successfully" });
         }
     }
 }

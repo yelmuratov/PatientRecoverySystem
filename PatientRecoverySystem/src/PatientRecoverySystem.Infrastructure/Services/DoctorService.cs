@@ -6,6 +6,9 @@ using PatientRecoverySystem.Application.Interfaces;
 using PatientRecoverySystem.Domain.Entities;
 using PatientRecoverySystem.Domain.Interfaces;
 using PatientRecoverySystem.Domain.Enums;
+using PatientRecoverySystem.Application.Parameters;
+using PatientRecoverySystem.Application.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace PatientRecoverySystem.Infrastructure.Services
 {
@@ -22,10 +25,36 @@ namespace PatientRecoverySystem.Infrastructure.Services
             _passwordHasher = passwordHasher;
         }
 
-        public async Task<List<DoctorDto>> GetAllDoctorsAsync()
+        public async Task<PagedResult<DoctorDto>> GetAllDoctorsAsync(DoctorQueryParameters parameters, ClaimsPrincipal user)
         {
-            var doctors = await _doctorRepository.GetAllAsync();
-            return _mapper.Map<List<DoctorDto>>(doctors);
+            var query = _doctorRepository.Query(); // <-- We assume Query() returns IQueryable<Doctor> from repository
+            if (query == null) throw new Exception("Doctor repository query returned null.");
+
+            var role = user.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (role != "AdminDoctor")
+            {
+                // Only AdminDoctor can see AdminDoctors
+                query = query.Where(d => d.Role != UserRole.AdminDoctor);
+            }
+
+            if (!string.IsNullOrWhiteSpace(parameters.Search))
+            {
+                query = query.Where(d => d.FullName.Contains(parameters.Search) || d.Email.Contains(parameters.Search));
+            }
+
+            query = query.OrderByDynamic(parameters.SortBy ?? "FullName", parameters.SortDirection?.ToLower() == "desc");
+
+            var totalItems = await query.CountAsync();
+
+            var doctors = await query
+                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                .Take(parameters.PageSize)
+                .ToListAsync();
+
+            var mappedDoctors = _mapper.Map<List<DoctorDto>>(doctors);
+
+            return new PagedResult<DoctorDto>(mappedDoctors, totalItems, parameters.PageNumber, parameters.PageSize);
         }
 
         public async Task<DoctorDto> GetDoctorByIdAsync(int id, ClaimsPrincipal user)

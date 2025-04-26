@@ -66,5 +66,10 @@ namespace PatientRecoverySystem.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public IQueryable<Doctor> Query()
+        {
+            return _context.Doctors.AsQueryable();
+        }
     }
 }

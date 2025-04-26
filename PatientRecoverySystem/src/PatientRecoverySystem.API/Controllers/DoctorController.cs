@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PatientRecoverySystem.Application.DTOs;
 using PatientRecoverySystem.Application.Interfaces;
+using PatientRecoverySystem.Application.Parameters;
+using PatientRecoverySystem.Domain.Entities;
 
 namespace PatientRecoverySystem.API.Controllers
 {
@@ -21,11 +23,12 @@ namespace PatientRecoverySystem.API.Controllers
         /// Get all doctors (Admin and normal doctors)
         /// </summary>
         [HttpGet]
-        [Authorize(Roles = "AdminDoctor,Moderator")] // 🔒 Only AdminDoctor and Doctor can access this endpoint
-        public async Task<IActionResult> GetAllDoctors()
+        [Authorize(Roles = "AdminDoctor,Moderator")]
+        [ProducesResponseType(typeof(PagedResult<DoctorDto>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllDoctors([FromQuery] DoctorQueryParameters parameters)
         {
-            var doctors = await _doctorService.GetAllDoctorsAsync();
-            return Ok(doctors);
+            var result = await _doctorService.GetAllDoctorsAsync(parameters, User);
+            return Ok(result);
         }
 
         /// <summary>

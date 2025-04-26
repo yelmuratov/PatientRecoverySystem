@@ -11,5 +11,13 @@ public interface IPatientRepository
     Task<Patient> AddAsync(Patient patient);
     Task<Patient> UpdateAsync(Patient patient);
     Task DeleteAsync(int id);
+
+    //Recovery log methods
     Task AddRecoveryLogAsync(RecoveryLog log);
+    Task<List<RecoveryLog>> GetRecoveryLogsByPatientIdAsync(int patientId);
+    Task<RecoveryLog> GetRecoveryLogByIdAsync(int id);
+    Task<RecoveryLog> UpdateRecoveryLogAsync(RecoveryLog log);
+    Task DeleteRecoveryLogAsync(int id);
+    Task<List<RecoveryLog>> GetAllRecoveryLogsAsync();
+    Task<List<RecoveryLog>> GetRecoveryLogsByDoctorIdAsync(int doctorId);
 }
