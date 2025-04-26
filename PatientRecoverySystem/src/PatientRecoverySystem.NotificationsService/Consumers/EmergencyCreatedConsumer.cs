@@ -5,16 +5,16 @@ using PatientRecoverySystem.NotificationsService.Models;
 
 namespace PatientRecoverySystem.NotificationsService.Consumers;
 
-public class RecoveryLogCreatedConsumer : IConsumer<RecoveryLogCreated>
+public class EmergencyCreatedConsumer : IConsumer<EmergencyCreatedEvent>
 {
     private readonly NotificationDbContext _dbContext;
 
-    public RecoveryLogCreatedConsumer(NotificationDbContext dbContext)
+    public EmergencyCreatedConsumer(NotificationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public async Task Consume(ConsumeContext<RecoveryLogCreated> context)
+    public async Task Consume(ConsumeContext<EmergencyCreatedEvent> context)
     {
         var message = context.Message;
 

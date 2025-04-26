@@ -16,7 +16,7 @@ builder.Services.AddDbContext<NotificationDbContext>(options =>
 
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumer<RecoveryLogCreatedConsumer>(); // 👈 ADD THIS
+    x.AddConsumer<EmergencyCreatedConsumer >(); // 👈 ADD THIS
 
     x.UsingRabbitMq((context, cfg) =>
     {
@@ -30,7 +30,7 @@ builder.Services.AddMassTransit(x =>
 
         cfg.ReceiveEndpoint("recovery-log-created-event-queue", e =>
         {
-            e.ConfigureConsumer<RecoveryLogCreatedConsumer>(context);
+            e.ConfigureConsumer<EmergencyCreatedConsumer>(context);
         });
 
         cfg.UseRetry(retryConfig =>
