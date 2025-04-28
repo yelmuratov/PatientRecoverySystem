@@ -1,5 +1,7 @@
 using AutoMapper;
+using MassTransit;
 using PatientRecoverySystem.Application.DTOs;
+using PatientRecoverySystem.Application.Events;
 using PatientRecoverySystem.Application.Interfaces;
 using PatientRecoverySystem.Domain.Entities;
 using PatientRecoverySystem.Domain.Interfaces;
@@ -10,20 +12,32 @@ namespace PatientRecoverySystem.Infrastructure.Services
     {
         private readonly IPatientRepository _patientRepository;
         private readonly IMapper _mapper;
+        private readonly IPublishEndpoint _publishEndpoint; 
 
-        public RecoveryLogService(IPatientRepository patientRepository, IMapper mapper)
+        public RecoveryLogService(IPatientRepository patientRepository, IMapper mapper, IPublishEndpoint publishEndpoint)
         {
             _patientRepository = patientRepository;
             _mapper = mapper;
+            _publishEndpoint = publishEndpoint; 
         }
 
         public async Task AddRecoveryLogAsync(int patientId, RecoveryLogDto logDto)
         {
             var recoveryLog = _mapper.Map<RecoveryLog>(logDto);
-            recoveryLog.Id = 0; // Make sure Id is not set
+            recoveryLog.Id = 0;
             recoveryLog.PatientId = patientId;
 
             await _patientRepository.AddRecoveryLogAsync(recoveryLog);
+
+            if (logDto.IsEmergency)
+            {
+                await _publishEndpoint.Publish(new EmergencyCreatedEvent
+                {
+                    PatientId = patientId,
+                    EmergencyType = logDto.Description ?? "Emergency Alert", // Use Description if available
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
         }
 
         public async Task<List<RecoveryLogDto>> GetRecoveryLogsByPatientIdAsync(int patientId)
