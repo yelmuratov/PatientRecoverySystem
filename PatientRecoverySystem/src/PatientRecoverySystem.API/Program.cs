@@ -25,6 +25,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Register Repositories
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
+builder.Services.AddScoped<IRehabilitationRepository, RehabilitationRepository>();
+builder.Services.AddScoped<IConsultationRepository, ConsultationRepository>();
 
 // Register Services
 builder.Services.AddScoped<IPatientService, PatientService>();
@@ -32,6 +34,10 @@ builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddSingleton<ITokenBlacklistService, TokenBlacklistService>();
 builder.Services.AddScoped<IRecoveryLogService, RecoveryLogService>();
+builder.Services.AddScoped<IRehabilitationService, RehabilitationService>();
+builder.Services.AddScoped<IConsultationService, ConsultationService>();
+builder.Services.AddScoped<IGeminiService, GeminiService>();
+builder.Services.AddHttpClient<IGeminiService, GeminiService>();
 
 // Add Password Hashers
 builder.Services.AddScoped<IPasswordHasher<Doctor>, PasswordHasher<Doctor>>();

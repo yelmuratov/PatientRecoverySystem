@@ -12,5 +12,6 @@ public class MappingProfile : Profile
         CreateMap<Patient, PatientDto>().ReverseMap();
         CreateMap<Doctor, DoctorDto>().ReverseMap();
         CreateMap<RecoveryLog, RecoveryLogDto>().ReverseMap();
+        
     }
 }

@@ -3,7 +3,7 @@ version: '3.9'
 services:
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq
+    container_name: prs_rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -13,7 +13,7 @@ services:
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sqlserver
+    container_name: prs_sqlserver
     environment:
       SA_PASSWORD: "YourStrong!Passw0rd"
       ACCEPT_EULA: "Y"
@@ -24,6 +24,7 @@ services:
     build:
       context: .
       dockerfile: src/PatientRecoverySystem.API/Dockerfile
+    container_name: prs_api
     depends_on:
       - sqlserver
       - rabbitmq
@@ -31,13 +32,14 @@ services:
       - "5000:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=PatientRecoveryDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;
-      - RabbitMQ__Host=rabbitmq
+      - ConnectionStrings__DefaultConnection=Server=prs_sqlserver;Database=PatientRecoveryDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;
+      - RabbitMQ__Host=prs_rabbitmq
 
   notificationservice:
     build:
       context: .
       dockerfile: src/PatientRecoverySystem.NotificationsService/Dockerfile
+    container_name: prs_notificationservice
     depends_on:
       - sqlserver
       - rabbitmq
@@ -45,5 +47,5 @@ services:
       - "5001:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__NotificationDb=Server=sqlserver;Database=NotificationDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;
-      - RabbitMQ__Host=rabbitmq
+      - ConnectionStrings__NotificationDb=Server=prs_sqlserver;Database=NotificationDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;
+      - RabbitMQ__Host=prs_rabbitmq

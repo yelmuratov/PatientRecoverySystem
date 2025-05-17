@@ -1,5 +1,10 @@
 using System.Net;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using PatientRecoverySystem.Application.Exceptions;
+using System.Threading.Tasks;
+using System;
 
 namespace PatientRecoverySystem.API.Middlewares
 {
@@ -18,47 +23,42 @@ namespace PatientRecoverySystem.API.Middlewares
         {
             try
             {
-                await _next(context);
+                await _next(context); 
+            }
+            catch (NotFoundException nfEx)
+            {
+                _logger.LogWarning(nfEx, "Not Found");
+
+                context.Response.StatusCode = StatusCodes.Status404NotFound;
+                context.Response.ContentType = "application/json";
+
+                var response = new
+                {
+                    type = "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+                    title = "Resource Not Found",
+                    status = 404,
+                    errors = new { resource = new[] { nfEx.Message } }
+                };
+
+                await context.Response.WriteAsJsonAsync(response);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled Exception");
 
-                await HandleExceptionAsync(context, ex);
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                context.Response.ContentType = "application/json";
+
+                var response = new
+                {
+                    type = "https://tools.ietf.org/html/rfc9110#section-15.6.1",
+                    title = "An unexpected error occurred.",
+                    status = 500,
+                    traceId = context.TraceIdentifier
+                };
+
+                await context.Response.WriteAsJsonAsync(response);
             }
-        }
-
-        private Task HandleExceptionAsync(HttpContext context, Exception exception)
-        {
-            context.Response.ContentType = "application/json";
-
-            var response = context.Response;
-            var result = "";
-
-            switch (exception)
-            {
-                case InvalidOperationException invalidOperation:
-                    response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    result = JsonSerializer.Serialize(new { message = invalidOperation.Message });
-                    break;
-
-                case UnauthorizedAccessException unauthorized:
-                    response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    result = JsonSerializer.Serialize(new { message = unauthorized.Message });
-                    break;
-
-                case KeyNotFoundException notFound:
-                    response.StatusCode = (int)HttpStatusCode.NotFound;
-                    result = JsonSerializer.Serialize(new { message = notFound.Message });
-                    break;
-
-                default:
-                    response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    result = JsonSerializer.Serialize(new { message = "An unexpected error occurred." });
-                    break;
-            }
-
-            return context.Response.WriteAsync(result);
         }
     }
 }

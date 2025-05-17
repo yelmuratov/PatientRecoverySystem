@@ -183,15 +183,10 @@ C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRe
 C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\staticwebassets.build.json
 C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\staticwebassets.development.json
 C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\staticwebassets\msbuild.PatientRecoverySystem.NotificationsService.Microsoft.AspNetCore.StaticWebAssets.props
-C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\staticwebassets\msbuild.PatientRecoverySystem.NotificationsService.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
-C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\staticwebassets\msbuild.build.PatientRecoverySystem.NotificationsService.props
-C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\staticwebassets\msbuild.buildMultiTargeting.PatientRecoverySystem.NotificationsService.props
-C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\staticwebassets\msbuild.buildTransitive.PatientRecoverySystem.NotificationsService.props
-C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\staticwebassets.pack.json
 C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\PatientR.D57ABBD2.Up2Date
 C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\PatientRecoverySystem.NotificationsService.dll
 C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\refint\PatientRecoverySystem.NotificationsService.dll
 C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\PatientRecoverySystem.NotificationsService.pdb
 C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\PatientRecoverySystem.NotificationsService.genruntimeconfig.cache
 C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\ref\PatientRecoverySystem.NotificationsService.dll
+C:\Users\elmur\Desktop\PatientRecoverySystem\PatientRecoverySystem\src\PatientRecoverySystem.NotificationsService\obj\Debug\net9.0\staticwebassets.build.json.cache

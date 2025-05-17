@@ -86,23 +86,5 @@ namespace PatientRecoverySystem.API.Controllers
             var logs = await _recoveryLogService.GetRecoveryLogsByDoctorIdAsync(doctorId);
             return Ok(logs);
         }
-
-        [HttpPost("test-emergency")]
-        [Authorize(Roles = "AdminDoctor,Doctor,Moderator,Patient")] // Optional: or remove authorization if you want easier testing
-        public async Task<IActionResult> TestEmergency()
-        {
-            var publishEndpoint = HttpContext.RequestServices.GetService<IPublishEndpoint>();
-            if (publishEndpoint == null)
-                return StatusCode(500, "PublishEndpoint not configured.");
-
-            await publishEndpoint.Publish(new EmergencyCreatedEvent
-            {
-                PatientId = 1, // Just for test
-                EmergencyType = "Test High Blood Pressure",
-                CreatedAt = DateTime.UtcNow
-            });
-
-            return Ok(new { message = "Test Emergency Event Published Successfully" });
-        }
     }
 }
