@@ -15,6 +15,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<RecoveryLog> RecoveryLogs { get; set; }
     public DbSet<RehabilitationRecord> RehabilitationRecords { get; set; }
     public DbSet<ConsultationRequest> ConsultationRequests { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -64,11 +65,12 @@ public class ApplicationDbContext : DbContext
             entity.Property(r => r.IsEmergency).HasDefaultValue(false);
         });
 
+        // ConsultationRequest entity
         modelBuilder.Entity<ConsultationRequest>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.SymptomDescription).IsRequired().HasMaxLength(1000);
-            entity.Property(e => e.SystemAdvice).HasMaxLength(1000);
+            entity.Property(e => e.SystemAdvice).HasColumnType("nvarchar(max)"); // ✅ Updated for Gemini output
         });
-        }
+    }
 }
