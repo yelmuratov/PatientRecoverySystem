@@ -19,6 +19,8 @@ services:
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
 
   api:
     build:
@@ -58,7 +60,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/certs:/etc/nginx/certs:ro  # Optional if you want HTTPS
+      - ./nginx/certs:/etc/nginx/certs:ro
     depends_on:
       - api
       - notificationservice
