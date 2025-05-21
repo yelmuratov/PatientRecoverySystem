@@ -49,3 +49,19 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__NotificationDb=Server=prs_sqlserver;Database=NotificationDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;
       - RabbitMQ__Host=prs_rabbitmq
+
+  nginx:
+    image: nginx:latest
+    container_name: prs_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro  # Optional if you want HTTPS
+    depends_on:
+      - api
+      - notificationservice
+
+volumes:
+  sqlserver_data:

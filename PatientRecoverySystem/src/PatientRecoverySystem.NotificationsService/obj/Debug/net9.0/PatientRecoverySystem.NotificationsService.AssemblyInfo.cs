@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PatientRecoverySystem.NotificationsService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0342162c879323fb4f8344517dc24c857ed4de3f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b60ad9f9cef9071db05df234659f46ba84a991db")]
 [assembly: System.Reflection.AssemblyProductAttribute("PatientRecoverySystem.NotificationsService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PatientRecoverySystem.NotificationsService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

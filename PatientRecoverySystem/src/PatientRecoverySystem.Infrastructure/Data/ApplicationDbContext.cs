@@ -70,7 +70,7 @@ public class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.SymptomDescription).IsRequired().HasMaxLength(1000);
-            entity.Property(e => e.SystemAdvice).HasColumnType("nvarchar(max)"); // ✅ Updated for Gemini output
+            entity.Property(e => e.SystemAdvice).HasColumnType("nvarchar(max)");
         });
     }
 }
