@@ -19,7 +19,7 @@ jobs:
 
     - name: 🔍 Build .NET Backend (Check before deploy)
       run: |
-        cd PatientRecoverySystem/PatientRecoverySystem
+        cd PatientRecoverySystem/src/PatientRecoverySystem.API
         dotnet restore
         dotnet build --configuration Release
 
