@@ -166,7 +166,7 @@ app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddlew
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowFrontend"); // ✅ CORS BEFORE auth middleware
+app.UseCors("AllowFrontend"); 
 app.UseAuthentication();
 app.UseAuthorization();
 
