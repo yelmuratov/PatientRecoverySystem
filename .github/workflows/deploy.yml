@@ -15,17 +15,13 @@ jobs:
     - name: 🛠️ Install .NET SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '9.0.x'  # Or match your backend version
+        dotnet-version: '9.0.x'
 
-    - name: 🔍 Build .NET Backend
+    - name: 🔍 Build .NET Backend (Check before deploy)
       run: |
-        cd src/PatientRecoverySystem.API
+        cd PatientRecoverySystem/PatientRecoverySystem
         dotnet restore
         dotnet build --configuration Release
-
-    # Optional: Run tests if you have them
-    # - name: 🧪 Run Tests
-    #   run: dotnet test
 
     - name: 🚀 Deploy via SSH
       uses: appleboy/ssh-action@v1.0.0
