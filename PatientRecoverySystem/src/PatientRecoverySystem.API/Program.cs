@@ -180,4 +180,4 @@ using (var scope = app.Services.CreateScope())
     DbInitializer.Initialize(context);
 }
 
-app.Run(); 
+app.Run();  maksdaksndkjansdknaskcl
