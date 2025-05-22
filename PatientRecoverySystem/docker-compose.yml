@@ -19,6 +19,14 @@ services:
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "YourStrong!Passw0rd", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   api:
     build:
@@ -26,8 +34,10 @@ services:
       dockerfile: src/PatientRecoverySystem.API/Dockerfile
     container_name: prs_api
     depends_on:
-      - sqlserver
-      - rabbitmq
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
     ports:
       - "5000:8080"
     environment:
@@ -41,11 +51,16 @@ services:
       dockerfile: src/PatientRecoverySystem.NotificationsService/Dockerfile
     container_name: prs_notificationservice
     depends_on:
-      - sqlserver
-      - rabbitmq
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
     ports:
       - "5001:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__NotificationDb=Server=prs_sqlserver;Database=NotificationDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;
       - RabbitMQ__Host=prs_rabbitmq
+
+volumes:
+  sqlserver_data:
