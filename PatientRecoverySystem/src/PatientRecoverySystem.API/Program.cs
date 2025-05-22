@@ -172,7 +172,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// ✅ Seed data
+// ✅ Seed data if needed
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
