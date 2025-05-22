@@ -167,7 +167,7 @@ app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddlew
 app.UseHttpsRedirection();
 
 app.UseCors("AllowFrontend"); 
-app.UseAuthentication();
+app.UseAuthentication(;
 app.UseAuthorization();
 
 app.MapControllers();
