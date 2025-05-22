@@ -164,7 +164,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 
 app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddleware>();
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection(;
 
 app.UseCors("AllowFrontend"); 
 app.UseAuthentication();
@@ -180,4 +180,4 @@ using (var scope = app.Services.CreateScope())
     DbInitializer.Initialize(context);
 }
 
-app.Run();  maksdaksndkjansdknaskcl
+app.Run();
