@@ -134,15 +134,19 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// ✅ Open CORS to all hosts (for development/testing)
+// ✅ Proper CORS: allow only specific origins + credentials
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy
-            .AllowAnyOrigin()
+        policy.WithOrigins(
+                "http://localhost:3000",
+                "http://localhost:4200",
+                "https://curevia.tech"
+            )
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -166,7 +170,7 @@ app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddlew
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAll"); 
+app.UseCors("AllowFrontend"); // 🔥 Use proper CORS policy
 app.UseAuthentication();
 app.UseAuthorization();
 
