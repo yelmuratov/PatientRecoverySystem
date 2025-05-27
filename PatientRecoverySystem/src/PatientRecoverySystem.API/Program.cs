@@ -134,15 +134,15 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// ✅ CORS configuration for frontend
+// ✅ Open CORS to all hosts (for development/testing)
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "https://curevia.tech") // Replace with your actual frontend domain
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials(); // Required for cookies
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
 
@@ -166,13 +166,12 @@ app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddlew
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowFrontend"); 
+app.UseCors("AllowAll"); 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-// ✅ Seed data if needed
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
