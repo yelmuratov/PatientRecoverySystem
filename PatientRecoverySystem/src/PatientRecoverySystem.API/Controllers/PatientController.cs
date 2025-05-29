@@ -52,7 +52,7 @@ namespace PatientRecoverySystem.API.Controllers
         /// Get all patients for a specific doctor
         /// </summary>
         [HttpGet("doctor/{doctorId}")]
-        [Authorize(Roles = "AdminDoctor,Moderator,Doctor")]
+        [Authorize]
         public async Task<IActionResult> GetPatientsByDoctorId(int doctorId)
         {
             var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
