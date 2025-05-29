@@ -27,7 +27,7 @@ namespace PatientRecoverySystem.Infrastructure.Services
 
         public async Task<PagedResult<DoctorDto>> GetAllDoctorsAsync(DoctorQueryParameters parameters, ClaimsPrincipal user)
         {
-            var query = _doctorRepository.Query(); // <-- We assume Query() returns IQueryable<Doctor> from repository
+            var query = _doctorRepository.Query(); 
             if (query == null) throw new Exception("Doctor repository query returned null.");
 
             var role = user.FindFirst(ClaimTypes.Role)?.Value;

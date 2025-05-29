@@ -70,12 +70,12 @@ namespace PatientRecoverySystem.API.Controllers
         /// Update a doctor by ID (Only AdminDoctor and Moderator can use this ideally)
         /// </summary>
         [HttpPut("{id}")]
-        [Authorize(Roles = "AdminDoctor,Moderator")]
+        [Authorize(Roles = "AdminDoctor,Moderator,Doctor")]
         public async Task<IActionResult> UpdateDoctor(int id, [FromBody] DoctorDto doctorDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var updated = await _doctorService.UpdateDoctorAsync(id, doctorDto, User); // pass User here
+            var updated = await _doctorService.UpdateDoctorAsync(id, doctorDto, User); 
             if (updated == null) return NotFound();
 
             return Ok(updated);
