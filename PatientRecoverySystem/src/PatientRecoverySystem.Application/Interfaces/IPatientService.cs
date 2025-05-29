@@ -9,7 +9,7 @@ namespace PatientRecoverySystem.Application.Interfaces
     {
         Task<PagedResult<PatientDto>> GetAllPatientsAsync(PatientQueryParameters parameters, ClaimsPrincipal user);
         Task<PatientDto> GetPatientByIdAsync(int id);
-        Task<List<PatientDto>> GetPatientsByDoctorIdAsync(int doctorId);
+        Task<List<PatientDto>> GetPatientsByDoctorIdAsync(int doctorId, ClaimsPrincipal user);
         Task<PatientDto> CreatePatientAsync(PatientDto dto);
         Task<PatientDto?> UpdatePatientAsync(int id, PatientDto dto);
         Task DeletePatientAsync(int id);

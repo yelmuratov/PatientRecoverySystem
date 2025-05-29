@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using PatientRecoverySystem.Application.DTOs;
 using PatientRecoverySystem.Application.Interfaces;
 using PatientRecoverySystem.Domain.Interfaces;
-using PatientRecoverySystem.Application.Parameters; 
-using PatientRecoverySystem.Domain.Entities; 
+using PatientRecoverySystem.Application.Parameters;
+using PatientRecoverySystem.Domain.Entities;
+using System.Security.Claims;
 namespace PatientRecoverySystem.API.Controllers
 {
     [ApiController]
@@ -54,15 +55,24 @@ namespace PatientRecoverySystem.API.Controllers
         [Authorize(Roles = "AdminDoctor,Moderator,Doctor")]
         public async Task<IActionResult> GetPatientsByDoctorId(int doctorId)
         {
-            var doctorExists = await _doctorService.GetDoctorByIdAsync(doctorId, User);
-            if (doctorExists == null)
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+            var userIdClaim = User.FindFirst("id")?.Value;
+
+            if (userRole == "Doctor" && int.Parse(userIdClaim!) != doctorId)
+            {
+                return Forbid("Doctors can only access their own patients.");
+            }
+
+            var doctor = await _doctorService.GetDoctorByIdAsync(doctorId, User); // will now not fail for same doctorId
+            if (doctor == null)
             {
                 return NotFound(new { message = "Doctor not found" });
             }
 
-            var patients = await _patientService.GetPatientsByDoctorIdAsync(doctorId);
+            var patients = await _patientService.GetPatientsByDoctorIdAsync(doctorId, User);
             return Ok(patients);
         }
+
 
         /// <summary>
         /// Create a new patient

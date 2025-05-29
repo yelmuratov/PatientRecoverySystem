@@ -53,7 +53,6 @@ namespace PatientRecoverySystem.API.Controllers
             }
         }
 
-
         /// <summary>
         /// Create a new doctor (Only AdminDoctor and Moderator can use this ideally)
         /// </summary>

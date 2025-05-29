@@ -10,7 +10,7 @@ using PatientRecoverySystem.Infrastructure.Data;
 using System.Security.Claims;
 using PatientRecoverySystem.Application.Parameters;
 using System.Collections.Generic;
-using PatientRecoverySystem.Application.Helpers; 
+using PatientRecoverySystem.Application.Helpers;
 
 namespace PatientRecoverySystem.Infrastructure.Services
 {
@@ -69,11 +69,20 @@ namespace PatientRecoverySystem.Infrastructure.Services
             return _mapper.Map<PatientDto>(patient);
         }
 
-        public async Task<List<PatientDto>> GetPatientsByDoctorIdAsync(int doctorId)
+        public async Task<List<PatientDto>> GetPatientsByDoctorIdAsync(int doctorId, ClaimsPrincipal user)
         {
+            var role = user.FindFirst(ClaimTypes.Role)?.Value;
+            var userId = int.Parse(user.FindFirst("id")?.Value ?? "0");
+
+            if (role == "Doctor" && userId != doctorId)
+            {
+                throw new UnauthorizedAccessException("Doctors can only access their own patients.");
+            }
+
             var patients = await _patientRepository.GetByDoctorIdAsync(doctorId);
             return _mapper.Map<List<PatientDto>>(patients);
         }
+
 
         public async Task<PatientDto> CreatePatientAsync(PatientDto dto)
         {
