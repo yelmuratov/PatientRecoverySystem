@@ -35,21 +35,21 @@ namespace PatientRecoverySystem.API.Controllers
         /// Get a doctor by ID
         /// </summary>
         [HttpGet("{id}")]
-        [Authorize(Roles = "AdminDoctor,Moderator")]
+        [Authorize] // Only authentication required, no specific role
         public async Task<IActionResult> GetDoctorById(int id)
         {
             try
             {
-                var doctor = await _doctorService.GetDoctorByIdAsync(id, User);
-                return Ok(doctor);
+            var doctor = await _doctorService.GetDoctorByIdAsync(id, User);
+            return Ok(doctor);
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Forbid(ex.Message);
+            return Forbid(ex.Message);
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(new { message = ex.Message });
+            return NotFound(new { message = ex.Message });
             }
         }
 

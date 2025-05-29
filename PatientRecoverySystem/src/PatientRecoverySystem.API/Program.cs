@@ -15,20 +15,20 @@ using MassTransit;
 var builder = WebApplication.CreateBuilder(args);
 
 // =========================
-// Configure Services (Dependency Injection)
+// Configure Services
 // =========================
 
-// Add DbContext - SQL Server
+// DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register Repositories
+// Repositories
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<IRehabilitationRepository, RehabilitationRepository>();
 builder.Services.AddScoped<IConsultationRepository, ConsultationRepository>();
 
-// Register Services
+// Services
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -39,14 +39,14 @@ builder.Services.AddScoped<IConsultationService, ConsultationService>();
 builder.Services.AddScoped<IGeminiService, GeminiService>();
 builder.Services.AddHttpClient<IGeminiService, GeminiService>();
 
-// Add Password Hashers
+// Password hashing
 builder.Services.AddScoped<IPasswordHasher<Doctor>, PasswordHasher<Doctor>>();
 builder.Services.AddScoped<IPasswordHasher<Patient>, PasswordHasher<Patient>>();
 
-// Add AutoMapper
+// AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-// Add JWT Authentication
+// JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -58,7 +58,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
 
         options.Events = new JwtBearerEvents
@@ -78,7 +79,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Add MassTransit for RabbitMQ
+// MassTransit with RabbitMQ
 builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
@@ -93,16 +94,13 @@ builder.Services.AddMassTransit(x =>
 
         cfg.UseRetry(retryConfig =>
         {
-            retryConfig.Interval(10, TimeSpan.FromSeconds(5)); // Try 10 times, every 5 seconds
+            retryConfig.Interval(10, TimeSpan.FromSeconds(5));
         });
     });
 });
 
-
-// Add Controllers
+// Controllers & Swagger
 builder.Services.AddControllers();
-
-// Add Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -136,19 +134,26 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Configure CORS (optional if frontend will be separate)
+// ✅ Proper CORS: allow only specific origins + credentials
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder => builder.AllowAnyOrigin()
-                          .AllowAnyHeader()
-                          .AllowAnyMethod());
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:3000",
+                "http://localhost:4200",
+                "https://curevia.tech"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
 });
 
 var app = builder.Build();
 
 // =========================
-// Configure Middleware
+// Middleware Pipeline
 // =========================
 
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
@@ -157,20 +162,20 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "PatientRecoverySystem.API v1");
-        c.RoutePrefix = "swagger"; // So that Swagger lives under /swagger
+        c.RoutePrefix = "swagger";
     });
 }
 
 app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
+
+app.UseCors("AllowFrontend"); // 🔥 Use proper CORS policy
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-// Seed Default Users
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;

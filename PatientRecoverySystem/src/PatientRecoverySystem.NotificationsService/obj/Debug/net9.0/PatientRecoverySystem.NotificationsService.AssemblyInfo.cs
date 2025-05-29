@@ -10,12 +10,16 @@
 using System;
 using System.Reflection;
 
-[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute(("dotnet-PatientRecoverySystem.NotificationsService-c6400948-8027-4b7d-98b0-df9e176" +
-    "4969c"))]
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("dotnet-PatientRecoverySystem.NotificationsService-c6400948-8027-4b7d-98b0-df9e176" +
+    "4969c")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("PatientRecoverySystem.NotificationsService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+<<<<<<< HEAD
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7a4d07df4805f2c876ae29f4e73a7e2e9878b11f")]
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+>>>>>>> 48ee9095e8b76480d0a395dfbcf2f2b70db370c5
 [assembly: System.Reflection.AssemblyProductAttribute("PatientRecoverySystem.NotificationsService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PatientRecoverySystem.NotificationsService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
