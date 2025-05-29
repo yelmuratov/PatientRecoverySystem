@@ -11,6 +11,8 @@ using PatientRecoverySystem.Application.Mappings;
 using Microsoft.AspNetCore.Identity;
 using PatientRecoverySystem.Domain.Entities;
 using MassTransit;
+using System.Security.Claims;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,7 +61,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+            
+            // 👇 Add these two lines
+            NameClaimType = ClaimTypes.NameIdentifier,
+            RoleClaimType = ClaimTypes.Role
         };
 
         options.Events = new JwtBearerEvents

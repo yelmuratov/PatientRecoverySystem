@@ -56,14 +56,14 @@ namespace PatientRecoverySystem.API.Controllers
         public async Task<IActionResult> GetPatientsByDoctorId(int doctorId)
         {
             var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
-            var userIdClaim = User.FindFirst("id")?.Value;
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (userRole == "Doctor" && int.Parse(userIdClaim!) != doctorId)
             {
                 return Forbid("Doctors can only access their own patients.");
             }
 
-            var doctor = await _doctorService.GetDoctorByIdAsync(doctorId, User); // will now not fail for same doctorId
+            var doctor = await _doctorService.GetDoctorByIdAsync(doctorId, User);
             if (doctor == null)
             {
                 return NotFound(new { message = "Doctor not found" });
@@ -72,6 +72,7 @@ namespace PatientRecoverySystem.API.Controllers
             var patients = await _patientService.GetPatientsByDoctorIdAsync(doctorId, User);
             return Ok(patients);
         }
+
 
 
         /// <summary>

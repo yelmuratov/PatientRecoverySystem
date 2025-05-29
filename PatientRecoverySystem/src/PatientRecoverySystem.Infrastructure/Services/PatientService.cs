@@ -72,7 +72,7 @@ namespace PatientRecoverySystem.Infrastructure.Services
         public async Task<List<PatientDto>> GetPatientsByDoctorIdAsync(int doctorId, ClaimsPrincipal user)
         {
             var role = user.FindFirst(ClaimTypes.Role)?.Value;
-            var userId = int.Parse(user.FindFirst("id")?.Value ?? "0");
+            var userId = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
 
             if (role == "Doctor" && userId != doctorId)
             {
@@ -82,6 +82,7 @@ namespace PatientRecoverySystem.Infrastructure.Services
             var patients = await _patientRepository.GetByDoctorIdAsync(doctorId);
             return _mapper.Map<List<PatientDto>>(patients);
         }
+
 
 
         public async Task<PatientDto> CreatePatientAsync(PatientDto dto)
