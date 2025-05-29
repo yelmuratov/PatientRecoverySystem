@@ -51,7 +51,7 @@ namespace PatientRecoverySystem.API.Controllers
         /// Get all patients for a specific doctor
         /// </summary>
         [HttpGet("doctor/{doctorId}")]
-        [Authorize(Roles = "AdminDoctor,Moderator")]
+        [Authorize(Roles = "AdminDoctor,Moderator,Doctor")]
         public async Task<IActionResult> GetPatientsByDoctorId(int doctorId)
         {
             var doctorExists = await _doctorService.GetDoctorByIdAsync(doctorId, User);
