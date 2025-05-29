@@ -9,8 +9,8 @@ using PatientRecoverySystem.Domain.Interfaces;
 using PatientRecoverySystem.Infrastructure.Data;
 using System.Security.Claims;
 using PatientRecoverySystem.Application.Parameters;
-using System.Collections.Generic;
 using PatientRecoverySystem.Application.Helpers;
+using PatientRecoverySystem.Application.Exceptions;
 
 namespace PatientRecoverySystem.Infrastructure.Services
 {
@@ -21,7 +21,11 @@ namespace PatientRecoverySystem.Infrastructure.Services
         private readonly IPasswordHasher<Patient> _passwordHasher;
         private readonly ApplicationDbContext _context;
 
-        public PatientService(IPatientRepository patientRepository, IMapper mapper, IPasswordHasher<Patient> passwordHasher, ApplicationDbContext context)
+        public PatientService(
+            IPatientRepository patientRepository,
+            IMapper mapper,
+            IPasswordHasher<Patient> passwordHasher,
+            ApplicationDbContext context)
         {
             _patientRepository = patientRepository;
             _mapper = mapper;
@@ -32,13 +36,12 @@ namespace PatientRecoverySystem.Infrastructure.Services
         public async Task<PagedResult<PatientDto>> GetAllPatientsAsync(PatientQueryParameters parameters, ClaimsPrincipal user)
         {
             var role = user.FindFirst(ClaimTypes.Role)?.Value;
-            var userIdClaim = user.FindFirst("id")?.Value;
+            var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(role) || string.IsNullOrEmpty(userIdClaim))
                 return new PagedResult<PatientDto>(new List<PatientDto>(), 0, parameters.PageNumber, parameters.PageSize);
 
             int userId = int.Parse(userIdClaim);
-
             var query = _context.Patients.AsQueryable();
 
             if (role == "Doctor")
@@ -71,18 +74,13 @@ namespace PatientRecoverySystem.Infrastructure.Services
 
         public async Task<List<PatientDto>> GetPatientsByDoctorIdAsync(int doctorId, ClaimsPrincipal user)
         {
-            var role = user.FindFirst(ClaimTypes.Role)?.Value;
-            var userId = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-
-            if (role == "Doctor" && userId != doctorId)
-            {
-                throw new UnauthorizedAccessException("Doctors can only access their own patients.");
-            }
+            var doctorExists = await _context.Doctors.AnyAsync(d => d.Id == doctorId);
+            if (!doctorExists)
+                throw new NotFoundException($"Doctor with id {doctorId} not found.");
 
             var patients = await _patientRepository.GetByDoctorIdAsync(doctorId);
             return _mapper.Map<List<PatientDto>>(patients);
         }
-
 
 
         public async Task<PatientDto> CreatePatientAsync(PatientDto dto)

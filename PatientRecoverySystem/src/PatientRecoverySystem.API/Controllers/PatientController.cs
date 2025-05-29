@@ -55,18 +55,16 @@ namespace PatientRecoverySystem.API.Controllers
         [Authorize]
         public async Task<IActionResult> GetPatientsByDoctorId(int doctorId)
         {
-            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (userRole == "Doctor" && int.Parse(userIdClaim!) != doctorId)
-            {
-                return Forbid("Doctors can only access their own patients.");
-            }
-
             var doctor = await _doctorService.GetDoctorByIdAsync(doctorId, User);
             if (doctor == null)
             {
-                return NotFound(new { message = "Doctor not found" });
+                return NotFound(new
+                {
+                    type = "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+                    title = "Resource Not Found",
+                    status = 404,
+                    errors = new { resource = new[] { $"Doctor with id {doctorId} not found." } }
+                });
             }
 
             var patients = await _patientService.GetPatientsByDoctorIdAsync(doctorId, User);

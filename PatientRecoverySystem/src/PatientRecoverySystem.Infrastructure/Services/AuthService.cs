@@ -55,19 +55,19 @@ namespace PatientRecoverySystem.Infrastructure.Services
                 }
             }
 
-            return null;
+            return null; 
         }
 
         private string GenerateJwtTokenForDoctor(Doctor doctor)
         {
             var claims = new[]
             {
-        new Claim(JwtRegisteredClaimNames.Sub, doctor.Id.ToString()),
-        new Claim(JwtRegisteredClaimNames.Email, doctor.Email),
-        new Claim(ClaimTypes.Role, doctor.Role.ToString()),
-        new Claim(ClaimTypes.NameIdentifier, doctor.Id.ToString()),
-        new Claim("FullName", doctor.FullName ?? "")
-    };
+                new Claim(JwtRegisteredClaimNames.Sub, doctor.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, doctor.Email),
+                new Claim(ClaimTypes.Role, doctor.Role.ToString()),
+                new Claim("id", doctor.Id.ToString()),
+                new Claim("FullName", doctor.FullName ?? "")
+            };
 
             return CreateJwt(claims);
         }
@@ -76,15 +76,15 @@ namespace PatientRecoverySystem.Infrastructure.Services
         {
             var claims = new[]
             {
-        new Claim(JwtRegisteredClaimNames.Sub, patient.Id.ToString()),
-        new Claim(JwtRegisteredClaimNames.Email, patient.Email),
-        new Claim(ClaimTypes.Role, patient.Role.ToString()),
-        new Claim(ClaimTypes.NameIdentifier, patient.Id.ToString()),
-        new Claim("FullName", patient.FullName ?? ""),
-        new Claim("Phone", patient.Phone ?? ""),
-        new Claim("DateOfBirth", patient.DateOfBirth.ToShortDateString()),
-        new Claim("Doctor", patient.DoctorId.ToString())
-    };
+                new Claim(JwtRegisteredClaimNames.Sub, patient.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, patient.Email),
+                new Claim(ClaimTypes.Role, patient.Role.ToString()),
+                new Claim("id", patient.Id.ToString()),
+                new Claim("FullName", patient.FullName ?? ""),
+                new Claim("Phone", patient.Phone ?? ""),
+                new Claim("DateOfBirth", patient.DateOfBirth.ToShortDateString()),
+                new Claim("Doctor", patient.DoctorId.ToString())
+            };
 
             return CreateJwt(claims);
         }

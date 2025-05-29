@@ -94,6 +94,7 @@ namespace PatientRecoverySystem.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
         public async Task<List<RecoveryLog>> GetAllRecoveryLogsAsync()
         {
             return await _context.RecoveryLogs.ToListAsync();
