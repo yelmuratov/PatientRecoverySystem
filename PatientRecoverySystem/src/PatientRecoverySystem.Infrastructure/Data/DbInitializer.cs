@@ -8,7 +8,7 @@ namespace PatientRecoverySystem.Infrastructure.Data
     {
         public static void Initialize(ApplicationDbContext context)
         {
-            context.Database.EnsureCreated();
+            context.Database.Migrate();
 
             var doctorPasswordHasher = new PasswordHasher<Doctor>();
             var patientPasswordHasher = new PasswordHasher<Patient>();
