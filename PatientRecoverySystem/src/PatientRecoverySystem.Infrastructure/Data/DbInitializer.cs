@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using PatientRecoverySystem.Domain.Entities;
 using PatientRecoverySystem.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace PatientRecoverySystem.Infrastructure.Data
 {
