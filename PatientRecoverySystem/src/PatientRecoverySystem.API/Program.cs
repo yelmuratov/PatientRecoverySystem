@@ -143,14 +143,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:3000",
-                "http://localhost:4200",
-                "https://curevia.tech"
-            )
+        policy
+            .AllowAnyOrigin()   // <- fully open
             .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+            .AllowAnyMethod();
     });
 });
 
