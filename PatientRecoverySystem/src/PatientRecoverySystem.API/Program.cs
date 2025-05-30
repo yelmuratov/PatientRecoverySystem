@@ -13,7 +13,6 @@ using PatientRecoverySystem.Domain.Entities;
 using MassTransit;
 using System.Security.Claims;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // =========================
@@ -62,8 +61,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-            
-            // 👇 Add these two lines
+
             NameClaimType = ClaimTypes.NameIdentifier,
             RoleClaimType = ClaimTypes.Role
         };
@@ -140,7 +138,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// ✅ Proper CORS: allow only specific origins + credentials
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -168,18 +166,19 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "PatientRecoverySystem.API v1");
-        c.RoutePrefix = "swagger";
+        c.RoutePrefix = "swagger"; 
+
+        // ✅ This fixes your issue behind nginx:
+        c.ConfigObject.AdditionalItems["url"] = "/swagger/v1/swagger.json";
     });
 }
 
 app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
-
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
