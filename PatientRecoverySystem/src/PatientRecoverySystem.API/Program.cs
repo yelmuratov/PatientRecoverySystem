@@ -138,15 +138,16 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// CORS
+// CORS - Fully fixed version here:
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .AllowAnyOrigin()   // <- fully open
+            .WithOrigins("http://localhost:4200", "http://127.0.0.1:4200")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
