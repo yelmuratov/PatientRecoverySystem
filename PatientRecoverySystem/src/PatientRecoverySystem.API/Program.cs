@@ -164,7 +164,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "PatientRecoverySystem.API v1");
         c.RoutePrefix = "swagger"; 
 
-        // ✅ This fixes your issue behind nginx:
         c.ConfigObject.AdditionalItems["url"] = "/swagger/v1/swagger.json";
     });
 }
