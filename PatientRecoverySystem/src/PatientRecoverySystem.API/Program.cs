@@ -138,13 +138,13 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// CORS
+// ✅ Strict CORS - only allow specific origin
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddPolicy("StrictCors", policy =>
     {
         policy
-            .AllowAnyOrigin()   // <- fully open
+            .WithOrigins("https://curevia.tech/") // replace with your actual frontend domain
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -163,8 +163,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "PatientRecoverySystem.API v1");
         c.RoutePrefix = "swagger"; 
-
-        // ✅ This fixes your issue behind nginx:
         c.ConfigObject.AdditionalItems["url"] = "/swagger/v1/swagger.json";
     });
 }
@@ -172,7 +170,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
-app.UseCors("AllowFrontend");
+app.UseCors("StrictCors");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
