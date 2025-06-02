@@ -51,6 +51,7 @@ namespace PatientRecoverySystem.API.Controllers
                 var phoneNumber = User.FindFirstValue("Phone");
                 var dateOfBirth = User.FindFirstValue("DateOfBirth");
                 var Doctor = User.FindFirstValue("Doctor");
+                
 
                 return Ok(new
                 {
