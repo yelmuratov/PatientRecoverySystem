@@ -138,15 +138,24 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+<<<<<<< HEAD
 // CORS
+=======
+// CORS - Fully fixed version here:
+>>>>>>> 1ab0131e4bd03983c55782bb3aec13715c9db58d
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
+<<<<<<< HEAD
             .AllowAnyOrigin()   // <- fully open
+=======
+            .WithOrigins("http://localhost:4200", "http://127.0.0.1:4200")
+>>>>>>> 1ab0131e4bd03983c55782bb3aec13715c9db58d
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -164,7 +173,10 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "PatientRecoverySystem.API v1");
         c.RoutePrefix = "swagger"; 
 
+<<<<<<< HEAD
         // ✅ This fixes your issue behind nginx:
+=======
+>>>>>>> 1ab0131e4bd03983c55782bb3aec13715c9db58d
         c.ConfigObject.AdditionalItems["url"] = "/swagger/v1/swagger.json";
     });
 }
