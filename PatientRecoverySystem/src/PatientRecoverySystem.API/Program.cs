@@ -144,7 +144,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .WithOrigins("https://my.curevia.tech", "https://www.curevia.tech", "http://164.92.252.187:4200", "http://localhost:4200", "https://164.92.252.187:4200")
+            .WithOrigins("https://curevia.tech", "https://my.curevia.tech", "https://www.curevia.tech", "http://164.92.252.187:4200", "http://localhost:4200", "https://164.92.252.187:4200")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
