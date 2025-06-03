@@ -146,7 +146,8 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins("https://patient-recovery-frontend-2hfn.vercel.app")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
