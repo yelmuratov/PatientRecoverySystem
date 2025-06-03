@@ -154,7 +154,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // =========================
-// Middleware Pipeline
+// Middleware Pipeline test
 // =========================
 
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
