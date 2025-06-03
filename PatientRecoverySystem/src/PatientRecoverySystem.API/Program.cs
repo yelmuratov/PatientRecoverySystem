@@ -138,24 +138,27 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// CORS
-    builder.Services.AddCors(options =>
+// CORS -- PROPER CORS FOR CREDENTIALS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        options.AddPolicy("AllowFrontend", policy =>
-        {
-            policy
-                .WithOrigins("http://localhost:4200", "https://curevia.tech")
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
-        });
+        policy
+            .WithOrigins(
+                "http://localhost:4200",
+                "https://curevia.tech",
+                "https://patient-recovery-frontend-2hfn.vercel.app"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
-
+});
 
 var app = builder.Build();
 
 // =========================
-// Middleware Pipeline
+// Middleware Pipeline (ORDER IS CRITICAL)
 // =========================
 
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
@@ -164,9 +167,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "PatientRecoverySystem.API v1");
-        c.RoutePrefix = "swagger"; 
-
-        // ✅ This fixes your issue behind nginx:
+        c.RoutePrefix = "swagger";
         c.ConfigObject.AdditionalItems["url"] = "/swagger/v1/swagger.json";
     });
 }
@@ -174,9 +175,14 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
+
+app.UseRouting(); // ✅ Required for correct CORS processing
+
+app.UseCors("AllowFrontend");  // ✅ Must be AFTER routing, BEFORE authentication
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
