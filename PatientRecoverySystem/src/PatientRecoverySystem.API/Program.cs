@@ -174,7 +174,7 @@ app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddlew
 app.UseHttpsRedirection();
 
 // ✅ CORS MUST BE BEFORE AUTH
-app.UseCors("AllowFrontend");
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
