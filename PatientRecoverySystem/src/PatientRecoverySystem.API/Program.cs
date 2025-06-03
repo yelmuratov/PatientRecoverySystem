@@ -138,16 +138,15 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// 🔓 FULLY OPEN CORS (for dev/debug)
+// CORS
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .SetIsOriginAllowed(_ => true) // allow all origins
+            .AllowAnyOrigin()   // <- fully open
             .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+            .AllowAnyMethod();
     });
 });
 
@@ -164,6 +163,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "PatientRecoverySystem.API v1");
         c.RoutePrefix = "swagger"; 
+
+        // ✅ This fixes your issue behind nginx:
         c.ConfigObject.AdditionalItems["url"] = "/swagger/v1/swagger.json";
     });
 }
@@ -171,9 +172,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
-
-app.UseCors();
-
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
