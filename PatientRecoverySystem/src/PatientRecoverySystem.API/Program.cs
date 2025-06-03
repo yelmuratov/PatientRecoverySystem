@@ -139,17 +139,17 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
+    builder.Services.AddCors(options =>
     {
-        policy
-            .WithOrigins("http://localhost:4200","https://patient-recovery-frontend-2hfn.vercel.app") 
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+        options.AddPolicy("AllowAll", policy =>
+        {
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
     });
-});
+
 
 var app = builder.Build();
 
@@ -173,7 +173,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 app.UseMiddleware<PatientRecoverySystem.API.Middlewares.ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
-app.UseCors("AllowFrontend");
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
