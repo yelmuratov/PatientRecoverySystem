@@ -138,17 +138,13 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// CORS -- PROPER CORS FOR CREDENTIALS
+// CORS -- PRODUCTION CONFIG: ONLY ALLOW frontend domain curevia.tech
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .WithOrigins(
-                "http://localhost:4200",
-                "https://curevia.tech",
-                "https://patient-recovery-frontend-2hfn.vercel.app"
-            )
+            .WithOrigins("https://curevia.tech")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
